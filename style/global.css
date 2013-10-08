@@ -1,0 +1,6 @@
+body {position:relative;}
+
+#currentElementDisplay {position:fixed; display:block; width:400px; min-height:100px; right:0; top:0; margin:10px; padding:10px; border:1px solid #000; background-color:rgba(255,255,255,0.5);}
+
+iframe {width:1021px; height:850px; margin-left:20px;}
+

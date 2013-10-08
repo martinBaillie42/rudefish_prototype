@@ -1,0 +1,13 @@
+# CORS - AJAX calls between domains that would normally be restricted
+urllib2.open("http://www.retailer.com/homepage")
+http://en.wikipedia.org/wiki/Cross-origin_resource_sharing
+
+# windows.postMessage - a way for two pages to communicate (this is normally restriced by the same origin policy)
+https://developer.mozilla.org/en-US/docs/Web/API/window.postMessage?redirectlocale=en-US&redirectslug=DOM%2Fwindow.postMessage
+
+
+http://html5demos.com/postmessage2
+
+chrome.exe --disable-web-security
+
+Martin Martin\AppData\Local\Google\Chrome\Application\chrome.exe –allow-file-access-from-files –disable-web-security
