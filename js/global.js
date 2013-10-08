@@ -7,8 +7,6 @@ rudeFish.display = (function() {
     return {
         currentCss: function(element) {
             var style = window.getComputedStyle($(element).get(0));
-            // console.log($(element).get(0));
-            // console.log(style);
             var id = $(element).get(0).id;
             var backgroundColour = style.backgroundColor;
             var height = style.height;
@@ -102,7 +100,7 @@ rudeFish.contextMenu = (function () {
 
 $('#rude_iframe').load(function () {
     var $rudeFrame = $('#rude_iframe').contents();
-    
+
     rudeFish.selector.init($rudeFrame);
     rudeFish.contextMenu.init($rudeFrame);
 
