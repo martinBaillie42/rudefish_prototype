@@ -38,19 +38,25 @@ rudeFish.pType = {
 	            var width = style.width;
 	            var height = style.height;
 
-	            $frame.contextmenu('setEntry', 'cut', 'CUT');
 	            newMenu = [
 	            	{title: 'id: ' + id},
-	            	{title: 'classes: ' + classes},
+	            	{title: 'class: ' + classes},
 	            	{title: 'background-color: ' + backgroundColour},
 	            	{title: 'color: ' + colour},
-	            	{title: 'width: ' + style.width},
-	            	{title: 'height: ' + style.height}
+	            	{title: 'width: ' + width},
+	            	{title: 'height: ' + height}
 	            ]
 
 	            $frame.contextmenu('replaceMenu', newMenu);
 
-			}
+			},
+			select: function (event, ui) {
+				var cssText = $(ui.item.get(0)).find('a').html()
+				$('*', '#dialog').remove();
+				$('#dialog').append('<span>' + cssText + '</span><br />');
+				$( "#dialog" ).dialog( "open" );
+				// generate form for elements dynamically
+			},
         });
 
     },    
@@ -72,7 +78,9 @@ $(document).ready(function () {
 $('#rude_iframe').load(function () {
     $extSite = $('#rude_iframe');
     rudeFish.pType.init($extSite);
-    // $('#rude_iframe').contents().getMenu();
 });
 
-    
+// html atributes and css styling separate.
+// translate colours to hex. Include sliders.
+// display changes in realtime, maybe on the form then maybe watch the input and
+// adjust accordingly in realtime.
