@@ -1,40 +1,12 @@
-rudeFish = {
-    theElement: ''
-};
+rudeFish = {};
 
-rudeFish.display = (function() {
+rudeFish.pType = {
 
-    return {
-        currentCss: function(element) {
-            var style = window.getComputedStyle($(element).get(0));
-            var id = $(element).get(0).id;
-            var backgroundColour = style.backgroundColor;
-            var height = style.height;
-            var classList = $(element).get(0).classList;
+    $frame: '',
+    prevElement: '',
+    currentElement: '',
 
-
-
-            $('#currentElementDisplay').html(
-                'id: ' + id + '<br />' +
-                'background-color: ' + backgroundColour + '<br />' +
-                'height: ' + height + '<br />' +
-                'classList: ' + classList
-            );   
-        }
-    }
-})();
-
-rudeFish.selector = (function() {
-
-	var $currentElement;
-
-    function highlightCurrentElement(element, $frame) {
-        $frame.find('*').css('outline-width', '0');
-        $(element).css('outline', '#ff0000 solid 1px');
-    }
-
-    function detectCurrentElement($frame) {
-
+    detectCurrentElement: function () {
         // reference: http://stackoverflow.com/questions/4698259/jquery-highlight-element-under-mouse-cursor
         prevElement = null;
         document.getElementById('rude_iframe').contentDocument.addEventListener('mousemove', function(e) {
@@ -44,72 +16,63 @@ rudeFish.selector = (function() {
                 }
                 $(elem).css('outline', '#ff0000 solid 1px');
                 prevElement = elem;
-                $currentElement = e.srcElement;
-                rudeFish.display.currentCss(e.srcElement);
-
+                currentElement = e.srcElement;
         }, true);
         // end reference: http://stackoverflow.com/questions/4698259/jquery-highlight-element-under-mouse-cursor
-    }
+    },
 
-    function displayCss(element) {
-        
-    }
-
-    return {
-        init: function($frame) {
-            detectCurrentElement($frame);
-        },
-
-        getCurrentElement: function() {
-        	return $currentElement
-        }
-    };
-
-})();
-rudeFish.contextMenu = (function () {
-
-    function listener($frame) {
+    rightClickMenu: function() {
+    	// console.log(that);
         //https://github.com/mar10/jquery-ui-contextmenu
-        var $currentElement;
-        $($frame).contextmenu({
+        $frame.contextmenu({
             delegate: "*",
-            menu: [
-                    {title: 'background-color', action: function (event, ui) {
-    						var style = window.getComputedStyle($($currentElement).get(0));
-    						var backgroundColour = style.backgroundColor;
-    						var id = ui.target.get(0).id;
-    						$('*', '#dialog').remove();
-    						$('#dialog').append('<span>' + backgroundColour + '<span>');
-    						$( "#dialog" ).dialog( "open" );
-    					}
-                	},
-                ],
-				  beforeOpen: function (event, ui){
-					$currentElement = rudeFish.selector.getCurrentElement();
-				  }
+            menu: [{title: 'dummy'}],
+			beforeOpen: function (event, ui){
+				var elementAttributes = $(currentElement).get(0);
+	            var id = elementAttributes.id;
+	            var classes = elementAttributes.classList;
+
+				var style = window.getComputedStyle(elementAttributes);
+	            var backgroundColour = style.backgroundColor;
+	            var colour = style.color;
+	            var width = style.width;
+	            var height = style.height;
+
+	            $frame.contextmenu('setEntry', 'cut', 'CUT');
+	            newMenu = [
+	            	{title: 'id: ' + id},
+	            	{title: 'classes: ' + classes},
+	            	{title: 'background-color: ' + backgroundColour},
+	            	{title: 'color: ' + colour},
+	            	{title: 'width: ' + style.width},
+	            	{title: 'height: ' + style.height}
+	            ]
+
+	            $frame.contextmenu('replaceMenu', newMenu);
+
+			}
         });
 
+    },    
+
+    init: function ($extframe) {
+        $frame = $extframe.contents();
+        this.detectCurrentElement();
+        this.rightClickMenu();
     }
+};
 
-    return {
-        init: function($frame) {
-            listener($frame);
-        }
-    }
-})();
+$(document).ready(function () {
 
-$('#rude_iframe').load(function () {
-    var $rudeFrame = $('#rude_iframe').contents();
-
-    rudeFish.selector.init($rudeFrame);
-    rudeFish.contextMenu.init($rudeFrame);
-
-});
-
-$(document).ready(function () {	
     $('#dialog').dialog({
     	autoOpen: false
     });
+
 })
+$('#rude_iframe').load(function () {
+    $extSite = $('#rude_iframe');
+    rudeFish.pType.init($extSite);
+    // $('#rude_iframe').contents().getMenu();
+});
 
-
+    
