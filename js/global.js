@@ -86,3 +86,4 @@ $('#rude_iframe').load(function () {
 // translate colours to hex. Include sliders.
 // display changes in realtime, maybe on the form then maybe watch the input and
 // adjust accordingly in realtime.
+// move UP or down the dom
