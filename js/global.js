@@ -1,8 +1,8 @@
-rudeFish = {};
+var rudeFish = {};
 
 rudeFish.pType = {
 
-    $frame: '',
+    // $frame: '',
     prevElement: '',
     currentElement: '',
 
@@ -24,7 +24,7 @@ rudeFish.pType = {
     rightClickMenu: function() {
     	// console.log(that);
         //https://github.com/mar10/jquery-ui-contextmenu
-        $frame.contextmenu({
+        that.$frame.contextmenu({
             delegate: "*",
             menu: [{title: 'dummy'}],
 			beforeOpen: function (event, ui){
@@ -47,7 +47,7 @@ rudeFish.pType = {
 	            	{title: 'height: ' + height}
 	            ]
 
-	            $frame.contextmenu('replaceMenu', newMenu);
+	            that.$frame.contextmenu('replaceMenu', newMenu);
 
 			},
 			select: function (event, ui) {
@@ -62,9 +62,10 @@ rudeFish.pType = {
     },    
 
     init: function ($extframe) {
-        $frame = $extframe.contents();
-        this.detectCurrentElement();
-        this.rightClickMenu();
+    	that = this;
+        that.$frame = $extframe.contents();
+        that.detectCurrentElement();
+        that.rightClickMenu();
     }
 };
 
@@ -78,6 +79,7 @@ $(document).ready(function () {
 $('#rude_iframe').load(function () {
     $extSite = $('#rude_iframe');
     rudeFish.pType.init($extSite);
+    // console.log($frame);
 });
 
 // html atributes and css styling separate.
