@@ -51,21 +51,55 @@ rudeFish.pType = {
 
 			},
 			select: function (event, ui) {
-				var cssText = $(ui.item.get(0)).find('a').html()
-				$('*', '#dialog').remove();
-				$('#dialog').append('<span>' + cssText + '</span><br />');
+				var cssText = $(ui.item.get(0)).find('a').html();
+                var cssLabel = cssText.split(':')[0];
+                var cssInput = cssText.split(':')[1].replace(' ','');
+
+                if(cssLabel === 'color' || cssLabel === 'background-color') {
+                    cssInput = cssInput.replace('rgba', '');
+                    cssInput = cssInput.replace('rgb', '');
+                    cssInput = cssInput.replace('(', '');
+                    cssInput = cssInput.replace(')', '');
+                    cssInput = cssInput.replace(' ', '');
+                    cssInputArray = cssInput.split(',');
+
+                    cssInput = '#';
+                    for (i = 0; i < cssInputArray.length; i++) {
+                        console.log(cssInputArray[i]);
+                        colorNumber = 255;
+                        colorNumber = cssInputArray[i];
+                        colorNumber = parseInt(colorNumber);
+                        // colorNumber.toString(16);
+                        colorNumber = colorNumber.toString(16);
+                        cssInput += colorNumber;
+                    }
+                    // console.log(cssInputArray[0]);
+                }
+
+
+                $('label', '#dialog').html(cssLabel);
+				$('input', '#dialog').val(cssInput);
 				$( "#dialog" ).dialog( "open" );
 				// generate form for elements dynamically
 			},
         });
 
-    },    
+    },   
+
+    updateElementCss: function() {
+        $('input', '#dialog').on('keyup', function() {
+            $(currentElement).css($('label', '#dialog').html(), $(this).val());
+            // var changeCss = window.getComputedStyle($(currentElement).get(0));
+            // changeCss.width = '10px';
+        });
+    }, 
 
     init: function ($extframe) {
     	that = this;
         that.$frame = $extframe.contents();
         that.detectCurrentElement();
         that.rightClickMenu();
+        that.updateElementCss();
     }
 };
 
@@ -80,6 +114,11 @@ $('#rude_iframe').load(function () {
     $extSite = $('#rude_iframe');
     rudeFish.pType.init($extSite);
     // console.log($frame);
+
+    // $('input', '#dialog').on('keyup', function() {
+    //     console.log(1);
+    // })
+
 });
 
 // html atributes and css styling separate.
@@ -87,3 +126,4 @@ $('#rude_iframe').load(function () {
 // display changes in realtime, maybe on the form then maybe watch the input and
 // adjust accordingly in realtime.
 // move UP or down the dom
+// show html
