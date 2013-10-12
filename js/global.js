@@ -51,10 +51,10 @@ rudeFish.pType = {
 			},
 			select: function (event, ui) {
 				var cssText = $(ui.item.get(0)).find('a').html();
-                var cssLabel = cssText.split(':')[0];
+                var cssProperty = cssText.split(':')[0];
                 var cssInput = cssText.split(':')[1].replace(' ','');
 
-                if(cssLabel === 'color' || cssLabel === 'background-color') {
+                if(cssProperty === 'color' || cssProperty === 'background-color') {
                     cssInput = cssInput.replace('rgba', '')
                     	.replace('rgb', '')
                     	.replace('(', '')
@@ -72,14 +72,97 @@ rudeFish.pType = {
                 }
 
 				// generate form for elements dynamically
-                $('label', '#dialog').html(cssLabel);
+                $('label', '#dialog').html(cssProperty);
                 $('input', '#dialog').val(cssInput);
                 $( "#dialog" ).dialog( "open" );
 
 			},
         });
 
-    },   
+    },
+
+    doesAttributeValueExist: function (attribute) {        
+        if (attribute === undefined) {
+            return false;
+        } else if (attribute.length === 0){
+            return false;
+        } 
+        return true;
+    },
+
+    constructValidClassString: function (classString) {
+        var classArr = classString.split(' ');
+        var i;
+
+        classString = '';
+        for (i = 0; i < classArr.length; i++) {
+            classArr[i] = classArr[i].trim();
+            if(classArr[i].length > 0) {
+                classString += '.' + classArr[i];
+            }
+        }
+        console.log(classString);
+        return classString;
+    },
+
+    createUniqueIdentifier: function() {
+        var $element = $(that.currentElement);
+        var tagName = $element.prop('tagName').toLowerCase();
+        var elementId = $element.attr('id');
+        var elementClass = $element.attr('class');
+        var elementAttrArr = [];
+        var i;
+
+        if(that.doesAttributeValueExist(elementId)) {
+            elementId = '#' + elementId;
+        } else {
+            elementId = '';
+        }
+
+        if(that.doesAttributeValueExist(elementClass)) {
+            elementClass = that.constructValidClassString(elementClass);
+        } else {
+            elementClass = '';
+        }     
+
+        elementAttrArr = [tagName, elementId, elementClass];
+        for (i = 0; i < elementAttrArr.length; i++) {
+            if (that.$frame.find(elementAttrArr[i]).length === 1) {
+                return elementAttrArr[i];
+            } 
+        } 
+
+        console.log('no unique identifier found');
+        return undefined;
+    },
+
+    constructUniqueIdAndCssObject: function (uniqueId) {
+        var cssProperty = $('label', '#dialog').html();
+        var cssValue = $('input', '#dialog').val();
+        var cssObject = {};
+        
+        cssObject[cssProperty] = cssValue;
+
+        if (that.savedCss[uniqueId] === undefined) {
+            cssObject[cssProperty] = cssValue;
+        } else {
+            cssObject = that.savedCss[uniqueId];
+            cssObject[cssProperty] = cssValue;
+        }
+
+        return cssObject;
+    },
+
+    recordChangedCss: function() {
+        var uniqueIdentifier = that.createUniqueIdentifier();
+
+        if (uniqueIdentifier !== undefined) {
+            that.savedCss[uniqueIdentifier] = that.constructUniqueIdAndCssObject(uniqueIdentifier);
+        }
+
+        console.log(that.savedCss);
+
+    },
 
     updateElementCss: function() {
         $('input', '#dialog').on('keyup', function() {
@@ -88,49 +171,15 @@ rudeFish.pType = {
         });
     }, 
 
-    recordChangedCss: function() {
-        // console.log($(that.currentElement));
-
-        // deal with undefineds () ? :
-        var $changedEl = $(that.currentElement)
-        var changedElId = $changedEl.attr('id');
-        var changedElClass = $changedEl.attr('class');
-        var cssObject = {};
-
-        changedElId = '#' + changedElId;
-        changedElClass = '.' + changedElClass.replace(' ', '.');
-
-        console.log(changedElClass);
-        var cssLabel = $('label', '#dialog').html();
-        var cssValue = $('input', '#dialog').val();
-
-        // need to validate css before recording it
-
-        // this whole thing could be a 'test for unique' method
-
-        // this block can be a separate function called many times for different combinations of values
-        //  id, classes, element and classes, parent element and classes, etc
-        if (that.$frame.find(changedElId).length === 1) {
-            console.log(changedElId);
-            that.cssObject[cssLabel] = cssValue;
-            that.savedCss[changedElId] = that.cssObject;
-                             
-        }
-
-        console.log(that.savedCss);
-        // console.log({element: {cssLabel: cssValue}})
-        // $('').css({color: #fff, width: 100px})
-        // {$obj: {color: #fff, width: 100px}}
-    },
 
     init: function ($extframe) {
-    	that = this;
+        that = this;
         that.$frame = $extframe.contents();
         that.prevElement;
         that.highlightedElement;
         that.currentElement;
         that.savedCss = {};
-        that.cssObject = {};
+        // that.cssObject = {};
 
         that.detectHighlightedElement();
         that.rightClickMenu();
