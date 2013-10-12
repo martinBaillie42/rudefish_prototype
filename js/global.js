@@ -106,12 +106,15 @@ rudeFish.pType = {
     },
 
     createUniqueIdentifier: function() {
+        var i;
         var $element = $(that.currentElement);
         var tagName = $element.prop('tagName').toLowerCase();
         var elementId = $element.attr('id');
         var elementClass = $element.attr('class');
         var elementAttrArr = [];
-        var i;
+        var elementAllIds;
+
+        var $parentElement;
 
         if(that.doesAttributeValueExist(elementId)) {
             elementId = '#' + elementId;
@@ -130,7 +133,20 @@ rudeFish.pType = {
             if (that.$frame.find(elementAttrArr[i]).length === 1) {
                 return elementAttrArr[i];
             } 
-        } 
+        }
+
+        // no unique id found so far. try with parents and keep moving up the tree
+        elementAllIds = elementAttrArr.join('');
+        $parentElement = $element.parents().map(function() {
+    			return this.tagName.toLowerCase();
+  			});
+
+        for (i = 0; i < $parentElement.length - 1; i++) {
+        	console.log($parentElement[i]);
+        	// if (that.$frame.find(elementAllIds, $parentElement[i].prop('tagName').toLowerCase()) === 1) {
+        	// 	console.log($parentElement[i]);
+        	// }
+        }
 
         console.log('no unique identifier found');
         return undefined;
@@ -167,11 +183,13 @@ rudeFish.pType = {
     updateElementCss: function() {
         var cssObj = {};
         $('input', '#dialog').on('keyup', function() {
+
         	cssObj = {};
         	cssObj[$('label', '#dialog').html()] = $(this).val();
-            // $(that.currentElement).css($('label', '#dialog').html(), $(this).val());
             $(that.currentElement).animate(cssObj, 200);
+
             that.recordChangedCss();
+
         });
     }, 
 
