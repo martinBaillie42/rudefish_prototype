@@ -165,8 +165,12 @@ rudeFish.pType = {
     },
 
     updateElementCss: function() {
+        var cssObj = {};
         $('input', '#dialog').on('keyup', function() {
-            $(that.currentElement).css($('label', '#dialog').html(), $(this).val());
+        	cssObj = {};
+        	cssObj[$('label', '#dialog').html()] = $(this).val();
+            // $(that.currentElement).css($('label', '#dialog').html(), $(this).val());
+            $(that.currentElement).animate(cssObj, 200);
             that.recordChangedCss();
         });
     }, 
@@ -179,7 +183,6 @@ rudeFish.pType = {
         that.highlightedElement;
         that.currentElement;
         that.savedCss = {};
-        // that.cssObject = {};
 
         that.detectHighlightedElement();
         that.rightClickMenu();
