@@ -27,6 +27,10 @@ rudeFish.pType = {
 	            var id = that.currentElement.id;
 	            var classes = that.currentElement.classList;
 
+                // loop through the css to get the styles
+
+                // loop throught the attributes doing the same
+
 				var style = window.getComputedStyle(that.currentElement);
 	            var backgroundColour = style.backgroundColor;
 	            var colour = style.color;
@@ -71,6 +75,7 @@ rudeFish.pType = {
                 $('label', '#dialog').html(cssLabel);
                 $('input', '#dialog').val(cssInput);
                 $( "#dialog" ).dialog( "open" );
+
 			},
         });
 
@@ -79,8 +84,44 @@ rudeFish.pType = {
     updateElementCss: function() {
         $('input', '#dialog').on('keyup', function() {
             $(that.currentElement).css($('label', '#dialog').html(), $(this).val());
+            that.recordChangedCss();
         });
     }, 
+
+    recordChangedCss: function() {
+        // console.log($(that.currentElement));
+
+        // deal with undefineds () ? :
+        var $changedEl = $(that.currentElement)
+        var changedElId = $changedEl.attr('id');
+        var changedElClass = $changedEl.attr('class');
+        var cssObject = {};
+
+        changedElId = '#' + changedElId;
+        changedElClass = '.' + changedElClass.replace(' ', '.');
+
+        console.log(changedElClass);
+        var cssLabel = $('label', '#dialog').html();
+        var cssValue = $('input', '#dialog').val();
+
+        // need to validate css before recording it
+
+        // this whole thing could be a 'test for unique' method
+
+        // this block can be a separate function called many times for different combinations of values
+        //  id, classes, element and classes, parent element and classes, etc
+        if (that.$frame.find(changedElId).length === 1) {
+            console.log(changedElId);
+            that.cssObject[cssLabel] = cssValue;
+            that.savedCss[changedElId] = that.cssObject;
+                             
+        }
+
+        console.log(that.savedCss);
+        // console.log({element: {cssLabel: cssValue}})
+        // $('').css({color: #fff, width: 100px})
+        // {$obj: {color: #fff, width: 100px}}
+    },
 
     init: function ($extframe) {
     	that = this;
@@ -88,6 +129,8 @@ rudeFish.pType = {
         that.prevElement;
         that.highlightedElement;
         that.currentElement;
+        that.savedCss = {};
+        that.cssObject = {};
 
         that.detectHighlightedElement();
         that.rightClickMenu();
