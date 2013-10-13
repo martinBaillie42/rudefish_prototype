@@ -293,4 +293,4 @@ $('#rude_iframe').load(function () {
 // show html
 // option to set maximum or minimum specifity
 // to ensure that this only fires on correct page use combo of body class and url detection.
-// email jquery to user to drop into client.js
+// email jquery to user to drop into client.js, or ftp it somehow? Maybe not poss
