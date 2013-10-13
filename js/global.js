@@ -72,9 +72,9 @@ rudeFish.pType = {
                 }
 
 				// generate form for elements dynamically
-                $('label', '#dialog').html(cssProperty);
-                $('input', '#dialog').val(cssInput);
-                $( "#dialog" ).dialog( "open" );
+                that.$dialogLabel.html(cssProperty);
+                that.$dialogInput.val(cssInput);
+                that.$dialog.dialog( "open" );
 
 			},
         });
@@ -131,6 +131,7 @@ rudeFish.pType = {
     uniqueId: function (elArr, parentArr) {
     	parentArr = parentArr || undefined;
         var elAllIds = elArr.join('');
+        var i;
 
 		if (parentArr === undefined) {		
 	        for (i = 0; i < elArr.length; i++) {
@@ -156,7 +157,6 @@ rudeFish.pType = {
     },
 
     createUniqueIdentifier: function() {
-        var i;
         var $element = $(that.currentElement);
         var tagName = that.getLowerCaseTag($element);
         var elementId = that.constructId($element);
@@ -174,53 +174,13 @@ rudeFish.pType = {
         if (that.uniqueId(elementAttrArr).length > 0) return that.uniqueId(elementAttrArr);
         if (that.uniqueId(elementAttrArr, parentElementsAttrs).length > 0) return that.uniqueId(elementAttrArr, parentElementsAttrs);
 
-
-
-
-
-
-
-
-   //      for (i = 0; i < aPE.length - 2; i++) {
-   //      	// console.log('11', aPE[i].elName + ' ' + elementAllIds);
-   //      	// console.log('15', that.$frame.find(aPE[i].elName + ' ' + elementAllIds));
-   //      	if (that.$frame.find(aPE[i].elName + ' ' + elementAllIds).length === 1) {
-   //      		// console.log('3', aPE[i].elName);
-   //      	}
-
-   //      	// console.log('12', aPE[i].elClass + ' ' + elementAllIds);
-   //      	if (that.$frame.find(aPE[i].elClass + ' ' + elementAllIds).length === 1) {
-   //      		// console.log('4', aPE[i].elClass);
-   //      	}
-
-   //      	// console.log('13', aPE[i].elId + ' ' + elementAllIds);
-   //      	if (that.$frame.find(aPE[i].elId + ' ' + elementAllIds).length === 1) {
-   //      		// console.log('5', aPE[i].elId);
-   //      	}
-			// // console.log('6', aPE[i].elName + aPE[i].elClass);
-   //      	if (that.$frame.find(elementAllIds, aPE[i].elName + aPE[i].elClass).length === 1) {
-   //      		// console.log('7', aPE[i].elName + aPE[i].elClass);
-   //      	}
-
-   //      	if (that.$frame.find(elementAllIds, aPE[i].elName + aPE[i].elId + aPE[i].elClass).length === 1) {
-   //      		// console.log('9', aPE[i].elName + aPE[i].elId + aPE[i].elClass);
-   //      	}
-
-   //      	if (that.$frame.find(elementAllIds, aPE[i+1].elName + aPE[i+1].elId + aPE[i+1].elClass + ' ' + aPE[i].elName + aPE[i].elId + aPE[i].elClass).length === 1) {
-   //      		// console.log('10', aPE[i].elName + aPE[i].elId + aPE[i].elClass);
-   //      	}
-
-   //      }
-
-        // console.log(allParentElements);
-
         console.log('no unique identifier found');
         return undefined;
     },
 
     constructUniqueIdAndCssObject: function (uniqueId) {
-        var cssProperty = $('label', '#dialog').html();
-        var cssValue = $('input', '#dialog').val();
+        var cssProperty = that.$dialogLabel.html();
+        var cssValue = that.$dialogInput.val();
         var cssObject = {};
         
         cssObject[cssProperty] = cssValue;
@@ -242,16 +202,16 @@ rudeFish.pType = {
             that.savedCss[uniqueIdentifier] = that.constructUniqueIdAndCssObject(uniqueIdentifier);
         }
 
-        // console.log(that.savedCss);
+        console.log(that.savedCss);
 
     },
 
     updateElementCss: function() {
         var cssObj = {};
-        $('input', '#dialog').on('keyup', function() {
+        that.$dialogInput.on('keyup', function() {
 
         	cssObj = {};
-        	cssObj[$('label', '#dialog').html()] = $(this).val();
+        	cssObj[that.$dialogLabel.html()] = $(this).val();
             $(that.currentElement).animate(cssObj, 200);
 
             that.recordChangedCss();
@@ -267,6 +227,9 @@ rudeFish.pType = {
         that.highlightedElement;
         that.currentElement;
         that.savedCss = {};
+        that.$dialogLabel = $('label', '#dialog');
+        that.$dialogInput = $('input', '#dialog');
+        that.$dialog = $('#dialog');
 
         that.detectHighlightedElement();
         that.rightClickMenu();
