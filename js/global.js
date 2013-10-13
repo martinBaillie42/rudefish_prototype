@@ -91,6 +91,7 @@ rudeFish.pType = {
     },
 
     constructValidClassString: function (classString) {
+    	console.log(classString);
         var classArr = classString.split(' ');
         var i;
 
@@ -137,16 +138,59 @@ rudeFish.pType = {
 
         // no unique id found so far. try with parents and keep moving up the tree
         elementAllIds = elementAttrArr.join('');
-        $parentElement = $element.parents().map(function() {
-    			return this.tagName.toLowerCase();
+        console.log('2', elementAllIds);
+        parentElement = $element.parents().map(function() {
+    			return '#' + $(this).attr('id');
+    			// return this.tagName.toLowerCase();
+  			});
+        // use just one parent id 
+        // for (i = 0; i < parentElement.length - 1; i++) {
+        // 	// console.log(parentElement[i]);
+        // 	if (that.$frame.find(elementAllIds, parentElement[i]) === 1) {
+        // 		console.log('1', parentElement[i]);
+        // 	}
+        // }
+
+        aPE = $element.parents().map(function() {
+    			return {
+	    				elName: this.tagName.toLowerCase(),
+	    				elId: (that.doesAttributeValueExist($(this).attr('id'))) ? '#' + $(this).attr('id') : '',
+	    				elClass: (that.doesAttributeValueExist($(this).attr('class'))) ? that.constructValidClassString($(this).attr('class')) : ''
+        			}; 
   			});
 
-        for (i = 0; i < $parentElement.length - 1; i++) {
-        	console.log($parentElement[i]);
-        	// if (that.$frame.find(elementAllIds, $parentElement[i].prop('tagName').toLowerCase()) === 1) {
-        	// 	console.log($parentElement[i]);
-        	// }
+        for (i = 0; i < aPE.length - 2; i++) {
+        	console.log('11', aPE[i].elName + ' ' + elementAllIds);
+        	console.log('15', that.$frame.find(aPE[i].elName + ' ' + elementAllIds));
+        	if (that.$frame.find(aPE[i].elName + ' ' + elementAllIds).length === 1) {
+        		console.log('3', aPE[i].elName);
+        	}
+
+        	console.log('12', aPE[i].elClass + ' ' + elementAllIds);
+        	if (that.$frame.find(aPE[i].elClass + ' ' + elementAllIds).length === 1) {
+        		console.log('4', aPE[i].elClass);
+        	}
+
+        	console.log('13', aPE[i].elId + ' ' + elementAllIds);
+        	if (that.$frame.find(aPE[i].elId + ' ' + elementAllIds).length === 1) {
+        		console.log('5', aPE[i].elId);
+        	}
+			// console.log('6', aPE[i].elName + aPE[i].elClass);
+        	if (that.$frame.find(elementAllIds, aPE[i].elName + aPE[i].elClass).length === 1) {
+        		console.log('7', aPE[i].elName + aPE[i].elClass);
+        	}
+
+        	if (that.$frame.find(elementAllIds, aPE[i].elName + aPE[i].elId + aPE[i].elClass).length === 1) {
+        		console.log('9', aPE[i].elName + aPE[i].elId + aPE[i].elClass);
+        	}
+
+        	if (that.$frame.find(elementAllIds, aPE[i+1].elName + aPE[i+1].elId + aPE[i+1].elClass + ' ' + aPE[i].elName + aPE[i].elId + aPE[i].elClass).length === 1) {
+        		console.log('10', aPE[i].elName + aPE[i].elId + aPE[i].elClass);
+        	}
+
         }
+
+        // console.log(allParentElements);
 
         console.log('no unique identifier found');
         return undefined;
