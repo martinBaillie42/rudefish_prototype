@@ -136,18 +136,18 @@ rudeFish.pType = {
 		if (parentArr === undefined) {		
 	        for (i = 0; i < elArr.length; i++) {
 	            if (that.$frame.find(elArr[i]).length === 1) {
-	            	console.log('1', elArr[i]);
+	            	// console.log('1', elArr[i]);
 	                return elArr[i];
 	            } 
 	        }
 	        if (that.$frame.find(elAllIds).length === 1) {
-	        	console.log('2', elAllIds);
+	        	// console.log('2', elAllIds);
 	        	return elAllIds;
 	        }
 		} else {
 	        for (i = 0; i < parentArr.length - 2; i++) {
 	            if (that.$frame.find(parentArr[i].elName + parentArr[i].elId + parentArr[i].elClass + ' ' + elAllIds).length === 1) {
-	            	console.log('4', parentArr[i].elName + parentArr[i].elId + parentArr[i].elClass + ' ' + elAllIds);
+	            	// console.log('4', parentArr[i].elName + parentArr[i].elId + parentArr[i].elClass + ' ' + elAllIds);
 	                return parentArr[i].elName + parentArr[i].elId + parentArr[i].elClass + ' ' + elAllIds;
 	            } 
 	        }
@@ -195,6 +195,25 @@ rudeFish.pType = {
         return cssObject;
     },
 
+    outputjQueryCss: function () {
+    	that.jQueryScript = '';
+    	$.each(that.savedCss, function(selector, cssObj) {
+    		var selector = selector.toString();
+    		var cssPropValues = '';
+		  	$.each(cssObj, function(cssProperty, cssValue) {
+		  		cssPropValues += "'" + cssProperty + "': '" + cssValue + "', ";
+		  		// console.log(cssProperty);
+		  	});
+		  	cssPropValues = cssPropValues.slice(0,-2);
+		  	console.log(cssPropValues);
+		  	that.jQueryScript += "$('" + selector + "').css({" + cssPropValues + "});\n"
+		  	// console.log(selector);
+		  	// console.log(cssPropValues);
+		});
+
+    	return that.jQueryScript;
+    },
+
     recordChangedCss: function() {
         var uniqueIdentifier = that.createUniqueIdentifier();
 
@@ -202,7 +221,7 @@ rudeFish.pType = {
             that.savedCss[uniqueIdentifier] = that.constructUniqueIdAndCssObject(uniqueIdentifier);
         }
 
-        console.log(that.savedCss);
+        console.log(that.outputjQueryCss());
 
     },
 
@@ -230,6 +249,7 @@ rudeFish.pType = {
         that.$dialogLabel = $('label', '#dialog');
         that.$dialogInput = $('input', '#dialog');
         that.$dialog = $('#dialog');
+        that.jQueryScript;
 
         that.detectHighlightedElement();
         that.rightClickMenu();
@@ -259,3 +279,4 @@ $('#rude_iframe').load(function () {
 // move UP or down the dom
 // show html
 // option to set maximum or minimum specifity
+// to ensure that this only fires on correct page use combo of body class and url detection.
