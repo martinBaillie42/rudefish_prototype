@@ -91,7 +91,7 @@ rudeFish.pType = {
     },
 
     constructValidClassString: function (classString) {
-    	console.log(classString);
+    	// console.log(classString);
         var classArr = classString.split(' ');
         var i;
 
@@ -102,93 +102,115 @@ rudeFish.pType = {
                 classString += '.' + classArr[i];
             }
         }
-        console.log(classString);
+        // console.log(classString);
         return classString;
+    },
+
+    getLowerCaseTag: function ($el) {
+    	return $el.prop('tagName').toLowerCase();
+    },
+
+    constructId: function ($el) {
+    	var elId = $el.attr('id');
+        if(that.doesAttributeValueExist(elId)) {
+            return '#' + elId;
+        } else {
+            return '';
+        }
+    },
+
+    constructClass: function ($el) {
+    	elClass = $el.attr('class')
+        if(that.doesAttributeValueExist(elClass)) {
+            return that.constructValidClassString(elClass);
+        } else {
+            return '';
+        } 
+    },
+
+    uniqueId: function (elArr, parentArr) {
+    	parentArr = parentArr || undefined;
+        var elAllIds = elArr.join('');
+
+		if (parentArr === undefined) {		
+	        for (i = 0; i < elArr.length; i++) {
+	            if (that.$frame.find(elArr[i]).length === 1) {
+	            	console.log('1', elArr[i]);
+	                return elArr[i];
+	            } 
+	        }
+	        if (that.$frame.find(elAllIds).length === 1) {
+	        	console.log('2', elAllIds);
+	        	return elAllIds;
+	        }
+		} else {
+	        for (i = 0; i < parentArr.length - 2; i++) {
+	            if (that.$frame.find(parentArr[i].elName + parentArr[i].elId + parentArr[i].elClass + ' ' + elAllIds).length === 1) {
+	            	console.log('4', parentArr[i].elName + parentArr[i].elId + parentArr[i].elClass + ' ' + elAllIds);
+	                return parentArr[i].elName + parentArr[i].elId + parentArr[i].elClass + ' ' + elAllIds;
+	            } 
+	        }
+		}
+
+    	return '';
     },
 
     createUniqueIdentifier: function() {
         var i;
         var $element = $(that.currentElement);
-        var tagName = $element.prop('tagName').toLowerCase();
-        var elementId = $element.attr('id');
-        var elementClass = $element.attr('class');
-        var elementAttrArr = [];
-        var elementAllIds;
+        var tagName = that.getLowerCaseTag($element);
+        var elementId = that.constructId($element);
+        var elementClass = that.constructClass($element);
+        var elementAttrArr = [tagName, elementId, elementClass];
 
-        var $parentElement;
+        var parentElementsAttrs = $element.parents().map(function() {
+					    			return {
+						    				elName: that.getLowerCaseTag($(this)),
+						    				elId: that.constructId($(this)),
+						    				elClass: that.constructClass($(this))
+					        				}; 
+								});
 
-        if(that.doesAttributeValueExist(elementId)) {
-            elementId = '#' + elementId;
-        } else {
-            elementId = '';
-        }
+        if (that.uniqueId(elementAttrArr).length > 0) return that.uniqueId(elementAttrArr);
+        if (that.uniqueId(elementAttrArr, parentElementsAttrs).length > 0) return that.uniqueId(elementAttrArr, parentElementsAttrs);
 
-        if(that.doesAttributeValueExist(elementClass)) {
-            elementClass = that.constructValidClassString(elementClass);
-        } else {
-            elementClass = '';
-        }     
 
-        elementAttrArr = [tagName, elementId, elementClass];
-        for (i = 0; i < elementAttrArr.length; i++) {
-            if (that.$frame.find(elementAttrArr[i]).length === 1) {
-                return elementAttrArr[i];
-            } 
-        }
 
-        // no unique id found so far. try with parents and keep moving up the tree
-        elementAllIds = elementAttrArr.join('');
-        console.log('2', elementAllIds);
-        parentElement = $element.parents().map(function() {
-    			return '#' + $(this).attr('id');
-    			// return this.tagName.toLowerCase();
-  			});
-        // use just one parent id 
-        // for (i = 0; i < parentElement.length - 1; i++) {
-        // 	// console.log(parentElement[i]);
-        // 	if (that.$frame.find(elementAllIds, parentElement[i]) === 1) {
-        // 		console.log('1', parentElement[i]);
-        // 	}
-        // }
 
-        aPE = $element.parents().map(function() {
-    			return {
-	    				elName: this.tagName.toLowerCase(),
-	    				elId: (that.doesAttributeValueExist($(this).attr('id'))) ? '#' + $(this).attr('id') : '',
-	    				elClass: (that.doesAttributeValueExist($(this).attr('class'))) ? that.constructValidClassString($(this).attr('class')) : ''
-        			}; 
-  			});
 
-        for (i = 0; i < aPE.length - 2; i++) {
-        	console.log('11', aPE[i].elName + ' ' + elementAllIds);
-        	console.log('15', that.$frame.find(aPE[i].elName + ' ' + elementAllIds));
-        	if (that.$frame.find(aPE[i].elName + ' ' + elementAllIds).length === 1) {
-        		console.log('3', aPE[i].elName);
-        	}
 
-        	console.log('12', aPE[i].elClass + ' ' + elementAllIds);
-        	if (that.$frame.find(aPE[i].elClass + ' ' + elementAllIds).length === 1) {
-        		console.log('4', aPE[i].elClass);
-        	}
 
-        	console.log('13', aPE[i].elId + ' ' + elementAllIds);
-        	if (that.$frame.find(aPE[i].elId + ' ' + elementAllIds).length === 1) {
-        		console.log('5', aPE[i].elId);
-        	}
-			// console.log('6', aPE[i].elName + aPE[i].elClass);
-        	if (that.$frame.find(elementAllIds, aPE[i].elName + aPE[i].elClass).length === 1) {
-        		console.log('7', aPE[i].elName + aPE[i].elClass);
-        	}
 
-        	if (that.$frame.find(elementAllIds, aPE[i].elName + aPE[i].elId + aPE[i].elClass).length === 1) {
-        		console.log('9', aPE[i].elName + aPE[i].elId + aPE[i].elClass);
-        	}
+   //      for (i = 0; i < aPE.length - 2; i++) {
+   //      	// console.log('11', aPE[i].elName + ' ' + elementAllIds);
+   //      	// console.log('15', that.$frame.find(aPE[i].elName + ' ' + elementAllIds));
+   //      	if (that.$frame.find(aPE[i].elName + ' ' + elementAllIds).length === 1) {
+   //      		// console.log('3', aPE[i].elName);
+   //      	}
 
-        	if (that.$frame.find(elementAllIds, aPE[i+1].elName + aPE[i+1].elId + aPE[i+1].elClass + ' ' + aPE[i].elName + aPE[i].elId + aPE[i].elClass).length === 1) {
-        		console.log('10', aPE[i].elName + aPE[i].elId + aPE[i].elClass);
-        	}
+   //      	// console.log('12', aPE[i].elClass + ' ' + elementAllIds);
+   //      	if (that.$frame.find(aPE[i].elClass + ' ' + elementAllIds).length === 1) {
+   //      		// console.log('4', aPE[i].elClass);
+   //      	}
 
-        }
+   //      	// console.log('13', aPE[i].elId + ' ' + elementAllIds);
+   //      	if (that.$frame.find(aPE[i].elId + ' ' + elementAllIds).length === 1) {
+   //      		// console.log('5', aPE[i].elId);
+   //      	}
+			// // console.log('6', aPE[i].elName + aPE[i].elClass);
+   //      	if (that.$frame.find(elementAllIds, aPE[i].elName + aPE[i].elClass).length === 1) {
+   //      		// console.log('7', aPE[i].elName + aPE[i].elClass);
+   //      	}
+
+   //      	if (that.$frame.find(elementAllIds, aPE[i].elName + aPE[i].elId + aPE[i].elClass).length === 1) {
+   //      		// console.log('9', aPE[i].elName + aPE[i].elId + aPE[i].elClass);
+   //      	}
+
+   //      	if (that.$frame.find(elementAllIds, aPE[i+1].elName + aPE[i+1].elId + aPE[i+1].elClass + ' ' + aPE[i].elName + aPE[i].elId + aPE[i].elClass).length === 1) {
+   //      		// console.log('10', aPE[i].elName + aPE[i].elId + aPE[i].elClass);
+   //      	}
+
+   //      }
 
         // console.log(allParentElements);
 
@@ -220,7 +242,7 @@ rudeFish.pType = {
             that.savedCss[uniqueIdentifier] = that.constructUniqueIdAndCssObject(uniqueIdentifier);
         }
 
-        console.log(that.savedCss);
+        // console.log(that.savedCss);
 
     },
 
@@ -273,3 +295,4 @@ $('#rude_iframe').load(function () {
 // adjust accordingly in realtime.
 // move UP or down the dom
 // show html
+// option to set maximum or minimum specifity
