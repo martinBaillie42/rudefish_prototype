@@ -205,13 +205,17 @@ rudeFish.pType = {
 		  		// console.log(cssProperty);
 		  	});
 		  	cssPropValues = cssPropValues.slice(0,-2);
-		  	console.log(cssPropValues);
+		  	// console.log(cssPropValues);
 		  	that.jQueryScript += "$('" + selector + "').css({" + cssPropValues + "});\n"
 		  	// console.log(selector);
 		  	// console.log(cssPropValues);
 		});
 
     	return that.jQueryScript;
+    },
+
+    addVersionjQuery: function(jQueryCss) {
+    	return 'if(whichMvt === ' + that.whichMvt +') {\n' + jQueryCss + '}';
     },
 
     recordChangedCss: function() {
@@ -221,7 +225,7 @@ rudeFish.pType = {
             that.savedCss[uniqueIdentifier] = that.constructUniqueIdAndCssObject(uniqueIdentifier);
         }
 
-        console.log(that.outputjQueryCss());
+        console.log(that.addVersionjQuery(that.outputjQueryCss()));
 
     },
 
@@ -238,9 +242,18 @@ rudeFish.pType = {
         });
     }, 
 
+    setWhichMvt: function() {
+    	if($('.btn.selected').html() === 'Test A') {
+    		return 1;	
+    	} else {
+    		return 2;
+    	}
+    	
+    },
 
     init: function ($extframe) {
         that = this;
+        that.whichMvt = that.setWhichMvt();;
         that.$frame = $extframe.contents();
         that.prevElement;
         that.highlightedElement;
@@ -280,3 +293,4 @@ $('#rude_iframe').load(function () {
 // show html
 // option to set maximum or minimum specifity
 // to ensure that this only fires on correct page use combo of body class and url detection.
+// email jquery to user to drop into client.js
